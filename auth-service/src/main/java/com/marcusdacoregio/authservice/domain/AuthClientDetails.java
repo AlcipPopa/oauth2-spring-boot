@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 
 import java.util.*;
 
-@Document
+@Document(collection = "auth_client_details")
 public class AuthClientDetails implements ClientDetails {
 
     private static final long serialVersionUID = 1L;

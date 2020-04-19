@@ -11,4 +11,4 @@ spring:
       password: 1234 #the password which apps will use to access its configurations
 
 server:
-  port: 8888 #the port where the config-server will be acessible
+  port: 7000 #the port where the config-server will be acessible

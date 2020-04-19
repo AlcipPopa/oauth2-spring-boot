@@ -33,26 +33,25 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    @Qualifier("mongoTokenStore")
+    private TokenStore tokenStore;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.withClientDetails(authClientDetailsService);
     }
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new MongoTokenStore();
-    }
-
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
-                .tokenStore(tokenStore())
+                .tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
         oauthServer
                 .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")

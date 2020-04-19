@@ -3,14 +3,14 @@ security:
     client:
       clientId: account-service
       clientSecret: 1234
-      accessTokenUri: http://localhost:8081/uaa/oauth/token
+      accessTokenUri: http://localhost:7001/uaa/oauth/token
       grant-type: client_credentials
       scope: server
 
 server:
   servlet:
     context-path: /accounts
-  port: 8082
+  port: 7003
 
 feign:
   hystrix:

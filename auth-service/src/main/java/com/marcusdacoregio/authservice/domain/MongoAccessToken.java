@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
-@Document
+@Document(collection = "mongo_access_token")
 public class MongoAccessToken {
 
     public static final String TOKEN_ID = "tokenId";

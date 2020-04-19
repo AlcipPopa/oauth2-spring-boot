@@ -3,11 +3,12 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      username: oauth-user
-      password: password
-      database: oauth-db
+      username: stentledbclient
+      password: asauseryoucanonlyeatmysocks
+      authentication-database: admin
+      database: oauth
 
 server:
   servlet:
     context-path: /uaa
-  port: 8081
+  port: 7002
