@@ -1,6 +1,8 @@
 spring:
   application:
     name: auth-service
+  profiles:
+    active: mongo-token-store
   cloud:
     config:
       uri: http://localhost:7000
