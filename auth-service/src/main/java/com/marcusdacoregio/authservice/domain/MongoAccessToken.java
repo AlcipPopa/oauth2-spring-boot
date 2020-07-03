@@ -1,13 +1,15 @@
 package com.marcusdacoregio.authservice.domain;
 
-import com.marcusdacoregio.authservice.util.SerializableObjectConverter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
+import java.io.Serializable;
+
+
 @Document(collection = "mongo_access_token")
-public class MongoAccessToken {
+public class MongoAccessToken implements Serializable {
 
     public static final String TOKEN_ID = "tokenId";
     public static final String REFRESH_TOKEN = "refreshToken";
@@ -25,6 +27,7 @@ public class MongoAccessToken {
     private String clientId;
     private String authentication;
     private String refreshToken;
+    private String lavoro;
 
     public String getId() {
         return id;
@@ -88,5 +91,13 @@ public class MongoAccessToken {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public String getLavoro() {
+        return lavoro;
+    }
+
+    public void setLavoro(String lavoro) {
+        this.lavoro = lavoro;
     }
 }

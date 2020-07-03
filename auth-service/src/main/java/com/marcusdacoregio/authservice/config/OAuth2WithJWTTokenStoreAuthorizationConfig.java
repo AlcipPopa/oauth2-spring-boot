@@ -1,9 +1,8 @@
 package com.marcusdacoregio.authservice.config;
 
-import com.marcusdacoregio.authservice.service.AuthClientDetailsService;
-import com.marcusdacoregio.authservice.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,12 +12,16 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-@Profile("mongo-token-store")
+import java.util.Arrays;
+
+@Profile("jwt-token-store")
 @Configuration
 @EnableAuthorizationServer
-public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
+public class OAuth2WithJWTTokenStoreAuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
     @Qualifier("authenticationManagerBean")
@@ -34,8 +37,19 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     private PasswordEncoder encoder;
 
     @Autowired
-    @Qualifier("mongoTokenStore")
-    private TokenStore tokenStore;
+    private AdditionalClaimsTokenEnhancer enhancer;
+
+    @Bean
+    public JwtAccessTokenConverter accessTokenConverter() {
+        JwtAccessTokenConverter conv = new JwtAccessTokenConverter();
+        conv.setSigningKey("non-prod-signature");
+        return conv;
+    }
+
+    @Bean
+    public JwtTokenStore jwtTokenStore() {
+        return new JwtTokenStore(accessTokenConverter());
+    }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -44,8 +58,12 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        TokenEnhancerChain chain = new TokenEnhancerChain();
+        chain.setTokenEnhancers(
+                Arrays.asList(enhancer, accessTokenConverter()));
+
         endpoints
-                .tokenStore(tokenStore)
+                .tokenStore(jwtTokenStore())
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
     }
